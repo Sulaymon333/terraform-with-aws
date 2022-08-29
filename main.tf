@@ -65,3 +65,8 @@ resource "aws_security_group" "sd_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_key_pair" "sd_auth" {
+  key_name =  "sdkey"
+  public_key =  file("~/.ssh/sdkey.pub")
+}
