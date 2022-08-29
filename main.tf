@@ -67,6 +67,23 @@ resource "aws_security_group" "sd_sg" {
 }
 
 resource "aws_key_pair" "sd_auth" {
-  key_name =  "sdkey"
-  public_key =  file("~/.ssh/sdkey.pub")
+  key_name   = "sdkey"
+  public_key = file("~/.ssh/sdkey.pub")
+}
+
+resource "aws_instance" "dev_node" {
+  instance_type          = "t2.micro"
+  ami                    = data.aws_ami.server_ami.id
+  key_name               = aws_key_pair.sd_auth.id
+  vpc_security_group_ids = [aws_security_group.sd_sg.id]
+  subnet_id              = aws_subnet.sd_public_subnet.id
+  user_data              = file("userdata.tpl")
+
+  root_block_device {
+    volume_size = 10
+  }
+
+  tags = {
+    Name = "dev.node"
+  }
 }
