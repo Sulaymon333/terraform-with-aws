@@ -72,7 +72,7 @@ resource "aws_key_pair" "sd_auth" {
 }
 
 resource "aws_instance" "dev_node" {
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   ami                    = data.aws_ami.server_ami.id
   key_name               = aws_key_pair.sd_auth.id
   vpc_security_group_ids = [aws_security_group.sd_sg.id]
@@ -84,6 +84,15 @@ resource "aws_instance" "dev_node" {
   }
 
   tags = {
-    Name = "dev.node"
+    Name = "dev-node"
+  }
+
+  provisioner "local-exec" {
+    command = templatefile("mac-linux-ssh-config.tpl", {
+      hostname = self.public_ip,
+      user  = "ubuntu"
+      identityfile = "~/.ssh/sdkey"
+    })
+    interpreter = ["bash", "-c"]
   }
 }
