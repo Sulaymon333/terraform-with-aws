@@ -88,9 +88,9 @@ resource "aws_instance" "dev_node" {
   }
 
   provisioner "local-exec" {
-    command = templatefile("mac-linux-ssh-config.tpl", {
-      hostname = self.public_ip,
-      user  = "ubuntu"
+    command = templatefile("${var.host_os}-ssh-config.tpl", {
+      hostname     = self.public_ip,
+      user         = "ubuntu"
       identityfile = "~/.ssh/sdkey"
     })
     interpreter = ["bash", "-c"]
